@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>compte_rendu.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<h1 id="compte-rendu-tp3-mi44-projet">Compte rendu TP3 MI44 (Projet)</h1>
+<h3 id="club-priv%C3%A9-avc-distribution-de-mot-passe-par-protocole-https">Club privé avc distribution de mot passe par protocole HTTPS</h3>
+<h2 id="valentin-mercy">Valentin Mercy</h2>
+<h1 id="introduction">Introduction</h1>
+<p>Le projet a pour but de sécuriser la consultation d'un mot de passe secret distribué par un club (par exemple un aéroclub) à ses membres. On imagine que ce mot de passe leur donne accès à une spécificité du club (dans l'exemple précédent, il pourrait s'agir du digicode permettant d'ouvrir le hangar où sont stockés les avions).<br>
+Les programmes fournis (en Python), dans l'état de départ, permettent d'effectuer cette tâche de manière non-sécurisée, comme nous allons l'observer dans l'étape 1.
+A la fin du projet, nous aurons donc modifié ces programmes de façon à établir une connexion <strong>HTTPS</strong> (HyperText Transfer Protocol Secure) = connexion <strong>HTTP</strong> combinée à une couche de sécurité comme <strong>SSL</strong> (Secure Sockets Layer) (utilisé ici) grâce à une autorité de certification qui signera un <strong>certificat</strong> transmis par le serveur.</p>
+<h2 id="etape-1--v%C3%A9rification-du-serveur-http">Etape 1 : Vérification du serveur HTTP</h2>
+<p>Il s'agit ici de lancer le serveur Flask (pour afficher une page dans le navigateur dont le seul contenu est un texte, supposé secret, qui constitue le mot de passe à transmettre aux membres du club) et d'utiliser l'utilitaire Wireshark pour montrer que n'importe quelle personne mal intentionnée placée sur le même réseau (côté serveur ou côté client) peut écouter le trafic et découvrir notre mot de passe. Le mot de passe choisi ici est <strong>valentinmercyMI44</strong></p>
+<ul>
+<li>Premièrement, je renseigne mon mot de passe dans le programme <em><strong>serveur.py</strong></em> :</li>
+</ul>
+<pre class="hljs"><code><div>MESSAGE_SECRET=&quot;valentinmercyMI44&quot;
+</div></code></pre>
+<ul>
+<li>Ensuite, je lance le serveur :</li>
+</ul>
+<pre class="hljs"><code><div>python serveur.py
+</div></code></pre>
+<ul>
+<li>En ouvrant le navigateur à l'adresse <em><strong>localhost:8081</strong></em>, on obtient bien le mot de passe :</li>
+</ul>
+<figure>
+    <img src="images/firefox_valentinmercyMI44.png">
+    <center><figcaption><i><u><b>Figure 1 :</b></u> Affichage du mot de passe sur le navigateur en HTTP</i></figcaption></center>
+</figure>
+* On ouvre alors Wireshark (analyseur de paquets). En lui indiquant le port à filtrer par la commande ci-dessous, on obtient la liste des transmissions suivante :
+```
+tcp.port==8081
+```
+<figure>
+    <img src="images/wireshark_debut.png">
+    <center><figcaption><i><u><b>Figure 2 :</b></u> Liste des transmissions disponibles dans Wireshark</i></figcaption></center>
+</figure>
+* Il nous suffit d'ouvrir la transmission repérée par le protocole HTTP pour afficher notre mot de passe en clair :
+<figure>
+    <img src="images/wireshark_valentinmercyMI44.png">
+    <center><figcaption><i><u><b>Figure 3 :</b></u> Affichage du mot de passe en clair par Wireshark</i></figcaption></center>
+</figure>
+<h2 id="etape-2--g%C3%A9n%C3%A9ration-du-certificat-de-lautorit%C3%A9-de-certification">Etape 2 : Génération du certificat de l'autorité de certification</h2>
+<p>Cette étape a pour but de générer le certificat de l'autorité de certification.</p>
+<ul>
+<li>Pour cela, j'utilise le programme <strong>ca_certification.py</strong> en rajoutant premièrement la ligne suivante afin de générer sa clé privée (j'ai choisi le mot de passe <strong>valentinmercy</strong> pour générer le certificat) :</li>
+</ul>
+<pre class="hljs"><code><div>private_key = generate_private_key(&quot;ca-cle-privee.pem&quot;,&quot;valentinmercy&quot;)
+</div></code></pre>
+<p>La fonction utilisée <strong>generate_private_key(basename,password)</strong> est importée de <em><strong>PKI_utile.py</strong></em> :</p>
+<pre class="hljs"><code><div>from PKI_utile import generate_private_key, generate_public_key
+</div></code></pre>
+<ul>
+<li>Cette fonction, utilisée avec les paramètres donnés plus haut, génère alors le fichier crypté <em><strong>serveur-cle-privee.pem</strong></em> contenant la clé privée. Cette clé privée est aussi retournée par la fonction, pour la suite de l'exécution.
+Le fichier ainsi créé est bien crypté avec RSA comme en témoigne son en-tête:</li>
+</ul>
+<pre class="hljs"><code><div>-----BEGIN RSA PRIVATE KEY-----
+Proc-Type: 4,ENCRYPTED
+DEK-Info: AES-256-CBC,DD18E0AF8078AF58448E3A0F70324E95
+</div></code></pre>
+<ul>
+<li>Enfin, je rajoute la ligne</li>
+</ul>
+<pre class="hljs"><code><div>public_key = generate_public_key(private_key,&quot;ca-cle-publique.pem&quot;,country=&quot;FR&quot;,state=&quot;AL&quot;,locality=&quot;Mulhouse&quot;,org=&quot;UTBM&quot;,hostname=&quot;monca.com&quot;)
+</div></code></pre>
+<p>Celle-ci génère un fichier similaire au fichier précédent, à la différence qu'il n'est pas crypté.
+Cela signifie qu'on peut le lire en utilisant, par exmeple, un programme python. Ce programme est donné dans le TP, mais je l'ai renommé en <em><strong>imprime_pem.py</strong></em> et modifié de façon à pouvoir passer en argument (sur la ligne de commande) :</p>
+<pre class="hljs"><code><div>cert_file_base_name = sys.argv[1]
+cert_file_name = os.path.realpath(__file__).split(&quot;/&quot;)
+cert_file_name = &quot;/&quot;.join(cert_file_name[:-1])+&quot;/&quot;+cert_file_base_name
+</div></code></pre>
+<p>Ainsi, avec la ligne de commande suivante :</p>
+<pre class="hljs"><code><div>python imprime_pem.py ca-cle-publique.pem
+</div></code></pre>
+<p>On obtient le résultat suivant :</p>
+<pre class="hljs"><code><div>Python 2.7.17 (default, Apr 15 2020, 17:20:14) [GCC 7.5.0] 64bit on linux2
+
+/home/valentin/Projet_MI44/ca-cle-publique.pem
+Certificate (ca-cle-publique.pem) data:
+
+{'issuer': ((('countryName', u'FR'),),
+            (('stateOrProvinceName', u'AL'),),
+            (('localityName', u'Mulhouse'),),
+            (('organizationName', u'UTBM'),),
+            (('commonName', u'monca.com'),)),
+ 'notAfter': 'Jul 21 15:58:16 2020 GMT',
+ 'notBefore': u'May 22 15:58:16 2020 GMT',
+ 'serialNumber': u'0D04CF7D626AD3CD7FE96CBA311CE7A17F121BD2',
+ 'subject': ((('countryName', u'FR'),),
+             (('stateOrProvinceName', u'AL'),),
+             (('localityName', u'Mulhouse'),),
+             (('organizationName', u'UTBM'),),
+             (('commonName', u'monca.com'),)),
+ 'version': 3L}
+
+Done.
+</div></code></pre>
+<p>Par contre, lorsqu'on essaie de faire de même avec la clé privée :</p>
+<pre class="hljs"><code><div>python imprime_pem.py ca-cle-privee.pem
+</div></code></pre>
+<p>On obtient le résultat suivant :</p>
+<pre class="hljs"><code><div>Python 2.7.17 (default, Apr 15 2020, 17:20:14) [GCC 7.5.0] 64bit on linux2
+
+/home/valentin/Projet_MI44/ca-cle-privee.pem
+Error decoding certificate: ('Error decoding PEM-encoded file',)
+
+Done.
+</div></code></pre>
+<p>Ce qui est normal, puisque cette clé ne doit pas être accessible autrement qu'avec le mot de passe.</p>
+<h2 id="etape-3--g%C3%A9n%C3%A9ration-du-certificat-du-serveur">Etape 3 : Génération du certificat du serveur</h2>
+<p>Cette étape consiste à générer, de façon analogue à l'étape précédente, le certificat du serveur et à le faire signer par l'autorité de certification.<br>
+Pour cela, on utilise le programme <em><strong>csr_certificat.py</strong></em> qu'on complète ainsi :</p>
+<pre class="hljs"><code><div>private_key = generate_private_key(&quot;serveur-cle-privee.pem&quot;,&quot;valentinmercy&quot;)
+csr = generate_csr(private_key,&quot;serveur-csr.pem&quot;,country=&quot;FR&quot;,state=&quot;AL&quot;,locality=&quot;Mulhouse&quot;,org=&quot;UTBM&quot;,hostname=&quot;moncsr.com&quot;)
+</div></code></pre>
+<ul>
+<li>La première ligne se charge de générer une clé privée pour le serveur (avec le mot de passe <strong>valentinmercy</strong>).</li>
+<li>La seconde se charge d'envoyer la requête CSR (Certificate Sign Request) à l'autorité de certification, grâce à la fonction <em><strong>generate_csr(private_key,basename,**kwargs)</strong></em>. <em>**kwargs</em> en Python permet de passer à la fonction un nombre illimité d'arguments. Ici, nous nous en servons pour passer :
+<ul>
+<li>le pays : country=&quot;FR&quot;</li>
+<li>la région : state=&quot;AL&quot; pour &quot;ALsace&quot;</li>
+<li>la ville : locality=&quot;Mulhouse&quot;</li>
+<li>l'organisation : org=&quot;UTBM&quot;</li>
+<li>le nom d'hôte : hostname=&quot;moncsr.com&quot;</li>
+</ul>
+</li>
+</ul>
+<p>On obtient maintenant 2 nouveaux fichiers <em><strong>.pem</strong></em> :<br>
+* <em><strong>serveur-cle-privee.pem</strong></em> : clé privée du serveur, cryptée<br>
+* <em><strong>serveur_csr.pem</strong></em> : clé publique temporaire du serveur (CSR) à faire signer par l'autorité de certification</p>
+<ul>
+<li>On exécute ensuite le programme <em><strong>certificatserveur.py</strong></em> qui se charge de faire signer la clé publique du serveur par l'autorité de certification, à condition qu'on lui fournisse le mot de passe de cette dernière (celui créé à l'étape 1). <u>Attention :</u> Ce programme est à lancer avec Python &gt;= 3 : utiliser</li>
+</ul>
+<pre class="hljs"><code><div>python3 certificatserveur.py 
+</div></code></pre>
+<p>On obtient alors le fichier <em><strong>serveur-cle-publique.pem</strong></em> qui est la clé publique du serveur signée par l'autorité de certification.</p>
+<ul>
+<li>On utilise à nouveau le programme <em><strong>imprime_pem.py</strong></em> pour afficher cette fois le certificat final (<em><strong>serveur-cle-publique.pem</strong></em>) :</li>
+</ul>
+<pre class="hljs"><code><div>python imprime_pem.py serveur-cle-publique.pem
+</div></code></pre>
+<p>On obtient alors le résultat suivant :</p>
+<pre class="hljs"><code><div>Python 2.7.17 (default, Apr 15 2020, 17:20:14) [GCC 7.5.0] 64bit on linux2
+
+/home/valentin/Projet_MI44/serveur-cle-publique.pem
+Certificate (serveur-cle-publique.pem) data:
+
+{'issuer': ((('countryName', u'FR'),),
+            (('stateOrProvinceName', u'AL'),),
+            (('localityName', u'Mulhouse'),),
+            (('organizationName', u'UTBM'),),
+            (('commonName', u'monca.com'),)),
+ 'notAfter': 'Jul 21 16:13:25 2020 GMT',
+ 'notBefore': u'May 22 16:13:25 2020 GMT',
+ 'serialNumber': u'4217BE4D92C5EBF12984326AD95F3FBAE61A36E6',
+ 'subject': ((('countryName', u'FR'),),
+             (('stateOrProvinceName', u'AL'),),
+             (('localityName', u'Mulhouse'),),
+             (('organizationName', u'UTBM'),),
+             (('commonName', u'moncsr.com'),)),
+ 'subjectAltName': (),
+ 'version': 3L}
+
+Done.
+</div></code></pre>
+<h2 id="etape-4--connexion-https">Etape 4 : Connexion HTTPS</h2>
+<p>Cette étape consiste à apporter une très légère modification au programme <em><strong>serveur.py</strong></em> de façon à établir la connexion HTTPS finale.
+Cette modification est la suivante :</p>
+<ul>
+<li>Avant modification :</li>
+</ul>
+<pre class="hljs"><code><div>app.run(debug=True, host=&quot;0.0.0.0&quot;,port=8081)
+</div></code></pre>
+<ul>
+<li>Après modification :</li>
+</ul>
+<pre class="hljs"><code><div>app.run(debug=True, host=&quot;0.0.0.0&quot;,port=8081,ssl_context=(&quot;serveur-cle-publique.pem&quot;,&quot;serveur-cle-privee.pem&quot;))
+</div></code></pre>
+<p>L'argument <strong>ssl_context</strong> permet de rajouter le tuple (server_public_key,server_private_key) qui donne accès aux certificats précedemment générés pour le serveur, nécessaires pour établir une connexion HTTPS.
+On en profite pour changer le message secret (mot de passe du club) pour être sûr qu'on a bien apporté une modification par rapport à la connexion HTTP précédente :</p>
+<pre class="hljs"><code><div>MESSAGE_SECRET=&quot;JeSuisLeMotDePasseDuClub&quot;
+</div></code></pre>
+<p>Au lancement du programme <em><strong>serveur.py</strong></em> par la ligne de commande</p>
+<pre class="hljs"><code><div>python serveur.py
+</div></code></pre>
+<p>le terminal nous demande maintenant le mot de passe du serveur (<strong>valentinmercy</strong>) :</p>
+<pre class="hljs"><code><div>valentin@Valentin-Ubuntu:~/Projet_MI44$ python serveur.py 
+ * Serving Flask app &quot;serveur&quot; (lazy loading)
+ * Environment: production
+   WARNING: This is a development server. Do not use it in a production deployment.
+   Use a production WSGI server instead.
+ * Debug mode: on
+ * Running on https://0.0.0.0:8081/ (Press CTRL+C to quit)
+ * Restarting with inotify reloader
+ * Debugger is active!
+ * Debugger PIN: 343-531-283
+Enter PEM pass phrase:
+ * Detected change in '/home/valentin/Projet_MI44/serveur.py', reloading
+ * Restarting with inotify reloader
+ * Debugger is active!
+ * Debugger PIN: 343-531-283
+Enter PEM pass phrase:
+</div></code></pre>
+<p>Une fois ce mot de passe saisi, on peut ré-ouvrir notre navigateur et constater qu'il refuse à priori de nous donner accès à la page. Le message d'erreur obtenu est le suivant :</p>
+<figure>
+    <img src="images/firefox_warning_certificat.png">
+    <center><figcaption><i><u><b>Figure 4 :</b></u> Message d'erreur obtenu en essayant d'ouvrir la page avec connexion HTTPS</i></figcaption></center>
+</figure>
+<p>Il suffit alors de cliquer sur <strong>Advanced</strong> puis <strong>Accept the Risk and Continue</strong> pour accepter le certificat et afficher la page avec le mot de passe du club :</p>
+<figure>
+    <img src="images/firefox_https.png">
+    <center><figcaption><i><u><b>Figure 5 :</b></u> Affichage du mot de passe du club avec la connexion HTTPS</i></figcaption></center>
+</figure>
+<h2 id="etape-5--am%C3%A9liorations">Etape 5 : Améliorations</h2>
+<p>Pour renforcer la sécurité établie jusque-là, on peut penser à plusieurs pistes :</p>
+<ul>
+<li>Changer l'algorithme de chiffrement ou y ajouter un échange de clés par Diffie-Hellman (éventuellement avec les courbes elliptiques)</li>
+<li>Donner accès au mot de passe après que le membre du club se soit authentifié à l'aide, par exemple, d'un login et d'un mot de passe</li>
+</ul>
+<p>C'est cette dernière piste que j'ai décidé d'approfondir. J'ai donc implémenté une connexion par login et mot de passe avec hachage du mot de passe concaténé à un sel, en utilisant les dernières recommandations PBKDF2, c'est-à-dire un HMAC à 80000 itérations. Le mot de passe et le sel seront stockés en base de données MySQL. En cas d'attaque du notre base de données, le HMAC 80000 ralentira considérablement les opérations de hachage pour tenter de découvrir le mot de passe d'un membre.</p>
+<h2 id="sources">Sources</h2>
+<p><a href="https://fr.wikipedia.org/wiki/HyperText_Transfer_Protocol_Secure">Wikipedia : HTTPS</a><br>
+<a href="https://fr.wikipedia.org/wiki/Transport_Layer_Security">Wikipedia : SSL</a></p>
+<h2 id="conclusion">Conclusion</h2>
+<p>Finalement, ce TP m'aura permis de comprendre le fonctionnement et l'implémentation d'une connexion sécurisée HTTPS, qui est devenue ces dernières années la norme pour établir toute connexion internet nécessitant un minimum de sécurité (sites de banques par exemple).</p>
+
+</body>
+</html>
