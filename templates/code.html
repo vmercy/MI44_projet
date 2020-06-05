@@ -1,0 +1,38 @@
+{% block content %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Code du hangar</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/style.css') }}">
+</head>
+<body>
+    <div class="border-top pt-3">
+        <div class="content-section">
+            <div>
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+            </div>
+            {% if secret %}
+            <p>Bonjour <u>{{ user }}</u> ! Voici le code du hangar aux avions :<b> {{ secret }} </b></p>
+            {% endif %}
+        </div>
+        <small class="text-muted">
+            {% if secret %}
+            <a class="ml-2" href="logout">Me déconnecter</a>
+            {% else %}
+            <a class="ml-2" href="/">Retour</a>
+            {% endif %}
+        </small>
+    </div>
+</body>
+
+</html>
+{% endblock content %}

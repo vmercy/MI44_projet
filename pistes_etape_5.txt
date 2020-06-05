@@ -1,0 +1,4 @@
+PISTES d'AMELIORATION
+algorithme de chiffrement (ajouter courbes elliptiques)
+accepter le certificat (import dans le browser)
+connexion avec login et mot de passe -> problématiques autour du stockage du mot de passe (hachage et sel, PCKB80000)

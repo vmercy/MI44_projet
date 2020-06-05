@@ -8,9 +8,12 @@ Edited on Mon May  25 22:34:00 2020
 """
 
 from flask import Flask, render_template, url_for, flash, redirect
+from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
 import random
 import os
+import string
+from hashlib import sha256
 
 from wtforms import StringField, PasswordField, SubmitField, BooleanField
 from wtforms.validators import DataRequired, Length, Email, EqualTo
@@ -31,6 +34,17 @@ class LoginForm(FlaskForm):
 
 LONGUEUR_CODE = 10
 
+LONGUEUR_HASH = 64 #une longueur de 64 caracteres est a prevoir pour une representation hexadecimale des hash
+LONGUEUR_SEL = 100
+PBKDF2_NB_ITER = 80000 #nombre d'iterations du hashage avec PBKDF2 (selon les recommandations donnees en cours)
+
+def GenererSel(): #retourne un sel de taille fixe compose de caracteres alphanumeriques
+    AlphaNumChars = string.ascii_letters + string.digits
+    return ''.join((random.choice(AlphaNumChars) for i in range(LONGUEUR_SEL)))
+
+Authentified = False
+CURRENT_USER=""
+
 def randomize_number(length): #renvoie un nombre aleatoire de longueur donnee
     return str(random.randint(10**(length-1),10**length-1))
 
@@ -40,8 +54,18 @@ app=Flask(__name__)
 
 SECRET_KEY = os.urandom(32)
 app.config['SECRET_KEY'] = SECRET_KEY
+app.config['SQLALCHEMY_DATABASE_URI']='sqlite:///site.db'
+db = SQLAlchemy(app)
 
-print "Mot de passe du hangar genere aleatoirement : "+MESSAGE_SECRET
+class Pilot(db.Model):
+    id = db.Column(db.Integer,primary_key=True)
+    username = db.Column(db.String(20), unique=True, nullable=False)
+    password_hash = db.Column(db.String(LONGUEUR_HASH),nullable=False)
+    password_salt = db.Column(db.String(LONGUEUR_SEL),nullable=False)
+    def __repr__(self):
+        return "Id : "+str(self.id)+" | Identifiant : "+str(self.username)
+
+print("Mot de passe du hangar genere aleatoirement : "+MESSAGE_SECRET)
 
 @app.route("/")
 def main():
@@ -53,7 +77,11 @@ def home():
 
 @app.route("/get_code")
 def get_secret_message():
-    return MESSAGE_SECRET #TODO: creer une page pour donner le code, avec un lien de retour vers /home
+    if Authentified:
+        return render_template('code.html', title='Login', secret=MESSAGE_SECRET, user=CURRENT_USER)
+    else:
+        flash("Vous n'etes pas connecté !",'danger')
+        return render_template('code.html', title='Login', secret="")
 
 @app.route("/register",methods=['GET','POST'])
 def register():
@@ -70,8 +98,12 @@ def login():
     if form.validate_on_submit():
         print("Soumission formulaire")
         if form.username.data == 'valentin' and form.password.data == 'mercy':
+            global CURRENT_USER
+            global Authentified
+            Authentified = True
+            CURRENT_USER = "Valentin"
             print("Authentification ok")
-            #flash('Connexion reussie !', 'success')
+            flash('Connexion reussie !', 'success')
             return redirect(url_for('get_secret_message'))
         else:
             print("Echec connexion")
@@ -79,6 +111,12 @@ def login():
     else:
         print("Pas de soumission du formulaire")
     return render_template('login.html', title='Login', form=form)
+
+@app.route("/logout")
+def logout():
+    global Authentified
+    Authentified = False
+    return redirect(url_for('main'))
 
 
 if __name__=="__main__":
