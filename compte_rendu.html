@@ -366,9 +366,19 @@ code {
     });
   </script>
 <h1 id="compte-rendu-tp3-mi44-projet">Compte rendu TP3 MI44 (Projet)</h1>
-<h3 id="club-priv%C3%A9-avc-distribution-de-mot-passe-par-protocole-https">Club privé avc distribution de mot passe par protocole HTTPS</h3>
+<h3 id="club-priv%C3%A9-avec-distribution-de-mot-passe-par-protocole-https">Club privé avec distribution de mot passe par protocole HTTPS</h3>
 <h2 id="valentin-mercy">Valentin Mercy</h2>
-<h1 id="introduction">Introduction</h1>
+<ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#etape-1--v%C3%A9rification-du-serveur-http">Etape 1 : Vérification du serveur HTTP</a></li>
+<li><a href="#etape-2--g%C3%A9n%C3%A9ration-du-certificat-de-lautorit%C3%A9-de-certification">Etape 2 : Génération du certificat de l'autorité de certification</a></li>
+<li><a href="#etape-3--g%C3%A9n%C3%A9ration-du-certificat-du-serveur">Etape 3 : Génération du certificat du serveur</a></li>
+<li><a href="#etape-4--connexion-https">Etape 4 : Connexion HTTPS</a></li>
+<li><a href="#etape-5--am%C3%A9liorations">Etape 5 : Améliorations</a></li>
+<li><a href="#sources">Sources</a></li>
+<li><a href="#conclusion">Conclusion</a></li>
+</ul>
+<h2 id="introduction">Introduction</h2>
 <p>Le projet a pour but de sécuriser la consultation d'un mot de passe secret distribué par un club (par exemple un aéroclub) à ses membres. On imagine que ce mot de passe leur donne accès à une spécificité du club (dans l'exemple précédent, il pourrait s'agir du digicode permettant d'ouvrir le hangar où sont stockés les avions).<br>
 Les programmes fournis (en Python), dans l'état de départ, permettent d'effectuer cette tâche de manière non-sécurisée, comme nous allons l'observer dans l'étape 1.
 A la fin du projet, nous aurons donc modifié ces programmes de façon à établir une connexion <strong>HTTPS</strong> (HyperText Transfer Protocol Secure) = connexion <strong>HTTP</strong> combinée à une couche de sécurité comme <strong>SSL</strong> (Secure Sockets Layer) (utilisé ici) grâce à une autorité de certification qui signera un <strong>certificat</strong> transmis par le serveur.</p>
@@ -581,12 +591,112 @@ Enter PEM pass phrase:
 <li>Changer l'algorithme de chiffrement ou y ajouter un échange de clés par Diffie-Hellman (éventuellement avec les courbes elliptiques)</li>
 <li>Donner accès au mot de passe après que le membre du club se soit authentifié à l'aide, par exemple, d'un login et d'un mot de passe</li>
 </ul>
-<p>C'est cette dernière piste que j'ai décidé d'approfondir. J'ai donc implémenté une connexion par login et mot de passe avec hachage du mot de passe concaténé à un sel, en utilisant les dernières recommandations PBKDF2, c'est-à-dire un HMAC à 80000 itérations. Le mot de passe et le sel seront stockés en base de données MySQL. En cas d'attaque du notre base de données, le HMAC 80000 ralentira considérablement les opérations de hachage pour tenter de découvrir le mot de passe d'un membre.</p>
+<p>C'est cette dernière piste que j'ai décidé d'approfondir. J'ai donc implémenté une connexion par login et mot de passe avec hachage du mot de passe concaténé à un sel, en utilisant les dernières recommandations PBKDF2, c'est-à-dire un HMAC à 80000 itérations. Le mot de passe et le sel seront stockés en base de données MySQL. En cas d'attaque du notre base de données, le HMAC 80000 ralentira considérablement les opérations de hachage pour tenter de découvrir le mot de passe d'un membre.<br>
+Pour cette sous-partie du projet, je me suis appuyé sur l'exemple de l'aéroclub donné dans mon introduction.
+On imagine donc que l'aéroclub souhaite donner à ses membres (désormais nommés pilotes) l'accès à un code renouvelé mensuellement, lequel leur permet d'ouvrir le hangar où sont stockés les avions.<br>
+On traitera le problème avec un code à 10 chiffres généré aléatoirement à chaque lancement de <em><strong>serveur.py</strong></em>.<br>
+Pour pouvoir exécuter mon code, il est nécessaire d'installer <em><strong>flask_wtf</strong></em>, <em><strong>wtforms</strong></em> ainsi que <em><strong>flask_sqlalchemy</strong></em> qui permettent notamment de créer des formulaires avec Flask et communiquer avec des bases de données SQL :</p>
+<pre class="hljs"><code><div>pip3 install flask_wtf
+pip3 install wtforms
+pip3 install flask_sqlalchemy 
+</div></code></pre>
+<p>L'objectif de ce projet n'étant pas de s'attarder sur la mise en forme d'une page html, j'ai utilisé des templates html et css trouvées <a href="https://github.com/CoreyMSchafer/code_snippets/tree/master/Python/Flask_Blog/03-Forms-and-Validation/templates">ici</a>.</p>
+<p>Pour la base de données, j'ai utilisé une base SQLite, dont la structure et les données sont stockées dans le même fichier <strong>site.db</strong>.</p>
+<p>Voici les comptes de pilote actuellement dans la base de données :</p>
+<center>
+<figure>
+    <table>
+    <thead>
+        <tr>
+            <th>Identifiant</th>
+            <th>Mot de passe</th>
+        </tr>
+    </thead>
+    <body>
+        <tr>
+            <td>Alice</td>
+            <td>ADSL</td>
+        </tr>
+        <tr>
+            <td>Bob</td>
+            <td>imbob</td>
+        </tr>
+        <tr>
+            <td>Charlie</td>
+            <td>jesuischarlie</td>
+        </tr>
+        <tr>
+            <td>Kevin</td>
+            <td>kevdu68</td>
+        </tr>
+        <tr>
+            <td>Mallory</td>
+            <td>malleauriz</td>
+        </tr>
+    </body>
+</table>
+    <figcaption><i><u><b>Tableau I :</b></u> Comptes existants dans la base de données</i></figcaption>
+</figure>
+</center>
+<p>Les hash et les sels sont générés automatiquement lorsqu'un novueau compte est ajouté. Ils sont stockés en base de donnnée :</p>
+<figure>
+    <img src="images/bdd.png">
+    <center><figcaption><i><u><b>Figure 6 :</b></u> Table des pilotes dans la BdD</i></figcaption></center>
+</figure>
+<p>L'interface que j'ai créée permet également de créer des comptes de pilote. Cela vous permettra de mieux tester ma solution en vous créant vos popres comptes. Toutefois, on imagine bien sûr qu'en réalité cette fonction serait réservée à un administrateur de l'aéroclub, ou à minima soumise à son appprobation. Sinon, tout le monde pourrait se créer un compte et accéder au code du hangar... Pour simplifier le projet, je n'ai pas traité cette approbation. Il s'agirait simplement de créer un compte spécial qui donne le privilège de créer d'autres comptes.</p>
+<p>Pour tester le projet, il vous suffit donc de démarrer le serveur en Python 3 (impératif !):</p>
+<pre class="hljs"><code><div>python3 serveur.py
+</div></code></pre>
+<p>Vous devez maintenant saisir le mot de passe du serveur : <strong>valentinmercy</strong></p>
+<p>Ensuite, connectez-vous avec l'un des comptes existants. Vous devriez alors voir apparaître le code du hangar.   Vous pouvez maintenant vérifier que le code du hangar est le même avec différents comptes en vous déconnectant/reconnectant plusieurs fois.<br>
+Vous pouvez également vérifier que le code du hangar affiché est bien le même que celui sorti sur le terminal par le serveur.</p>
+<p>Bien entendu, si vous essayez d'accéder à l'url <a href="https://0.0.0.0:8081/get_code">https://0.0.0.0:8081/get_code</a> sans vous être connecté au préalable, vous obtiendrez le message d'erreur suivant :</p>
+<figure>
+    <img src="images/err_fool.png">
+    <center><figcaption><i><u><b>Figure 8 :</b></u> Erreur lors d'un accès non-connecté</i></figcaption></center>
+</figure>
+<p>Voici les résultats de mes test :</p>
+<pre class="hljs"><code><div>valentin@Valentin-Ubuntu:~/Projet_MI44$ python3 serveur.py
+/home/valentin/.local/lib/python3.6/site-packages/flask_sqlalchemy/__init__.py:834: FSADeprecationWarning: SQLALCHEMY_TRACK_MODIFICATIONS adds significant overhead and will be disabled by default in the future.  Set it to True or False to suppress this warning.
+  'SQLALCHEMY_TRACK_MODIFICATIONS adds significant overhead and '
+Mot de passe du hangar genere aleatoirement : 1535160774
+ * Serving Flask app &quot;serveur&quot; (lazy loading)
+ * Environment: production
+   WARNING: This is a development server. Do not use it in a production deployment.
+   Use a production WSGI server instead.
+ * Debug mode: on
+ * Running on https://0.0.0.0:8081/ (Press CTRL+C to quit)
+ * Restarting with stat
+/home/valentin/.local/lib/python3.6/site-packages/flask_sqlalchemy/__init__.py:834: FSADeprecationWarning: SQLALCHEMY_TRACK_MODIFICATIONS adds significant overhead and will be disabled by default in the future.  Set it to True or False to suppress this warning.
+  'SQLALCHEMY_TRACK_MODIFICATIONS adds significant overhead and '
+Mot de passe du hangar genere aleatoirement : 9211497873
+</div></code></pre>
+<center>
+<figure>
+    <img src="images/menu_principal.png">
+    <center><figcaption><i><u><b>Figure 8 :</b></u> Menu principal</i></figcaption></center>
+</figure>
+<figure>
+    <img src="images/login.png">
+    <center><figcaption><i><u><b>Figure 9 :</b></u> Page de connexion</i></figcaption></center>
+</figure>
+<figure>
+    <img src="images/login_filled.png">
+    <center><figcaption><i><u><b>Figure 10 :</b></u> Page de connexion remplie avec les identifiants de Charlie</i></figcaption></center>
+</figure>
+<figure>
+    <img src="images/code.png">
+    <center><figcaption><i><u><b>Figure 11 :</b></u> Affichage du code du hangar</i></figcaption></center>
+</figure>
+</center>
 <h2 id="sources">Sources</h2>
 <p><a href="https://fr.wikipedia.org/wiki/HyperText_Transfer_Protocol_Secure">Wikipedia : HTTPS</a><br>
-<a href="https://fr.wikipedia.org/wiki/Transport_Layer_Security">Wikipedia : SSL</a></p>
+<a href="https://fr.wikipedia.org/wiki/Transport_Layer_Security">Wikipedia : SSL</a><br>
+<a href="https://www.youtube.com/watch?v=UIJKdCIEXUQ">YouTube : Corey Schafer - Tutoriel Python Flask</a>
+<a href="https://github.com/CoreyMSchafer/code_snippets/tree/master/Python/Flask_Blog/03-Forms-and-Validation">Codes sources pour formulaires Flask</a></p>
 <h2 id="conclusion">Conclusion</h2>
-<p>Finalement, ce TP m'aura permis de comprendre le fonctionnement et l'implémentation d'une connexion sécurisée HTTPS, qui est devenue ces dernières années la norme pour établir toute connexion internet nécessitant un minimum de sécurité (sites de banques par exemple).</p>
+<p>Finalement, ce TP m'aura permis de comprendre le fonctionnement et l'implémentation d'une connexion sécurisée HTTPS, qui est devenue ces dernières années la norme pour établir toute connexion internet nécessitant un minimum de sécurité (sites de banques par exemple).<br>
+De plus, il m'aura permis d'apprendre à utiliser Flask pour Python, dont j'avais déjà entendu parler mais dont je n'avais pas eu l'utilité jusque-là. Cet outil peut être utile pour implémenter rapidement des applications légères telles que celle développée pour ce TP.</p>
 
 </body>
 </html>

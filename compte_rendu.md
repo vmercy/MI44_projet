@@ -1,6 +1,18 @@
 # Compte rendu TP3 MI44 (Projet) #
-### Club privé avc distribution de mot passe par protocole HTTPS ###
+### Club privé avec distribution de mot passe par protocole HTTPS ###
 ## Valentin Mercy ##
+
+- [Compte rendu TP3 MI44 (Projet)](#compte-rendu-tp3-mi44-projet)
+    - [Club privé avec distribution de mot passe par protocole HTTPS](#club-privé-avec-distribution-de-mot-passe-par-protocole-https)
+  - [Valentin Mercy](#valentin-mercy)
+  - [Introduction](#introduction)
+  - [Etape 1 : Vérification du serveur HTTP](#etape-1--vérification-du-serveur-http)
+  - [Etape 2 : Génération du certificat de l'autorité de certification](#etape-2--génération-du-certificat-de-lautorité-de-certification)
+  - [Etape 3 : Génération du certificat du serveur](#etape-3--génération-du-certificat-du-serveur)
+  - [Etape 4 : Connexion HTTPS](#etape-4--connexion-https)
+  - [Etape 5 : Améliorations](#etape-5--améliorations)
+  - [Sources](#sources)
+  - [Conclusion](#conclusion)
 
 ## Introduction ##
 Le projet a pour but de sécuriser la consultation d'un mot de passe secret distribué par un club (par exemple un aéroclub) à ses membres. On imagine que ce mot de passe leur donne accès à une spécificité du club (dans l'exemple précédent, il pourrait s'agir du digicode permettant d'ouvrir le hangar où sont stockés les avions).  
@@ -220,13 +232,116 @@ C'est cette dernière piste que j'ai décidé d'approfondir. J'ai donc implémen
 Pour cette sous-partie du projet, je me suis appuyé sur l'exemple de l'aéroclub donné dans mon introduction.
 On imagine donc que l'aéroclub souhaite donner à ses membres (désormais nommés pilotes) l'accès à un code renouvelé mensuellement, lequel leur permet d'ouvrir le hangar où sont stockés les avions.  
 On traitera le problème avec un code à 10 chiffres généré aléatoirement à chaque lancement de ***serveur.py***.  
-Pour pouvoir exécuter mon code, il est nécessaire d'installer ***flask_wtf*** et ***wtforms*** qui permettent notamment de créer des formulaires avec Flask :
+Pour pouvoir exécuter mon code, il est nécessaire d'installer ***flask_wtf***, ***wtforms*** ainsi que ***flask_sqlalchemy*** qui permettent notamment de créer des formulaires avec Flask et communiquer avec des bases de données SQL :
 ```
-pip install flask_wtf
-pip install wtforms
+pip3 install flask_wtf
+pip3 install wtforms
+pip3 install flask_sqlalchemy 
 ```  
 L'objectif de ce projet n'étant pas de s'attarder sur la mise en forme d'une page html, j'ai utilisé des templates html et css trouvées [ici](https://github.com/CoreyMSchafer/code_snippets/tree/master/Python/Flask_Blog/03-Forms-and-Validation/templates).
 
+Pour la base de données, j'ai utilisé une base SQLite, dont la structure et les données sont stockées dans le même fichier **site.db**.
+
+Voici les comptes de pilote actuellement dans la base de données :
+<center>
+<figure>
+    <table>
+    <thead>
+        <tr>
+            <th>Identifiant</th>
+            <th>Mot de passe</th>
+        </tr>
+    </thead>
+    <body>
+        <tr>
+            <td>Alice</td>
+            <td>ADSL</td>
+        </tr>
+        <tr>
+            <td>Bob</td>
+            <td>imbob</td>
+        </tr>
+        <tr>
+            <td>Charlie</td>
+            <td>jesuischarlie</td>
+        </tr>
+        <tr>
+            <td>Kevin</td>
+            <td>kevdu68</td>
+        </tr>
+        <tr>
+            <td>Mallory</td>
+            <td>malleauriz</td>
+        </tr>
+    </body>
+</table>
+    <figcaption><i><u><b>Tableau I :</b></u> Comptes existants dans la base de données</i></figcaption>
+</figure>
+</center>
+
+Les hash et les sels sont générés automatiquement lorsqu'un novueau compte est ajouté. Ils sont stockés en base de donnnée :
+
+<figure>
+    <img src="images/bdd.png">
+    <center><figcaption><i><u><b>Figure 6 :</b></u> Table des pilotes dans la BdD</i></figcaption></center>
+</figure>
+
+
+L'interface que j'ai créée permet également de créer des comptes de pilote. Cela vous permettra de mieux tester ma solution en vous créant vos popres comptes. Toutefois, on imagine bien sûr qu'en réalité cette fonction serait réservée à un administrateur de l'aéroclub, ou à minima soumise à son appprobation. Sinon, tout le monde pourrait se créer un compte et accéder au code du hangar... Pour simplifier le projet, je n'ai pas traité cette approbation. Il s'agirait simplement de créer un compte spécial qui donne le privilège de créer d'autres comptes.
+
+Pour tester le projet, il vous suffit donc de démarrer le serveur en Python 3 (impératif !):
+```
+python3 serveur.py
+```
+Vous devez maintenant saisir le mot de passe du serveur : **valentinmercy**
+
+Ensuite, connectez-vous avec l'un des comptes existants. Vous devriez alors voir apparaître le code du hangar.   Vous pouvez maintenant vérifier que le code du hangar est le même avec différents comptes en vous déconnectant/reconnectant plusieurs fois.  
+Vous pouvez également vérifier que le code du hangar affiché est bien le même que celui sorti sur le terminal par le serveur.
+
+Bien entendu, si vous essayez d'accéder à l'url [https://0.0.0.0:8081/get_code](https://0.0.0.0:8081/get_code) sans vous être connecté au préalable, vous obtiendrez le message d'erreur suivant :  
+<figure>
+    <img src="images/err_fool.png">
+    <center><figcaption><i><u><b>Figure 8 :</b></u> Erreur lors d'un accès non-connecté</i></figcaption></center>
+</figure>
+
+Voici les résultats de mes test :
+```
+valentin@Valentin-Ubuntu:~/Projet_MI44$ python3 serveur.py
+/home/valentin/.local/lib/python3.6/site-packages/flask_sqlalchemy/__init__.py:834: FSADeprecationWarning: SQLALCHEMY_TRACK_MODIFICATIONS adds significant overhead and will be disabled by default in the future.  Set it to True or False to suppress this warning.
+  'SQLALCHEMY_TRACK_MODIFICATIONS adds significant overhead and '
+Mot de passe du hangar genere aleatoirement : 1535160774
+ * Serving Flask app "serveur" (lazy loading)
+ * Environment: production
+   WARNING: This is a development server. Do not use it in a production deployment.
+   Use a production WSGI server instead.
+ * Debug mode: on
+ * Running on https://0.0.0.0:8081/ (Press CTRL+C to quit)
+ * Restarting with stat
+/home/valentin/.local/lib/python3.6/site-packages/flask_sqlalchemy/__init__.py:834: FSADeprecationWarning: SQLALCHEMY_TRACK_MODIFICATIONS adds significant overhead and will be disabled by default in the future.  Set it to True or False to suppress this warning.
+  'SQLALCHEMY_TRACK_MODIFICATIONS adds significant overhead and '
+Mot de passe du hangar genere aleatoirement : 9211497873
+```
+<center>
+<figure>
+    <img src="images/menu_principal.png">
+    <center><figcaption><i><u><b>Figure 8 :</b></u> Menu principal</i></figcaption></center>
+</figure>
+
+<figure>
+    <img src="images/login.png">
+    <center><figcaption><i><u><b>Figure 9 :</b></u> Page de connexion</i></figcaption></center>
+</figure>
+
+<figure>
+    <img src="images/login_filled.png">
+    <center><figcaption><i><u><b>Figure 10 :</b></u> Page de connexion remplie avec les identifiants de Charlie</i></figcaption></center>
+</figure>
+
+<figure>
+    <img src="images/code.png">
+    <center><figcaption><i><u><b>Figure 11 :</b></u> Affichage du code du hangar</i></figcaption></center>
+</figure>
+</center>
 
 ## Sources ##
 [Wikipedia : HTTPS](https://fr.wikipedia.org/wiki/HyperText_Transfer_Protocol_Secure)  

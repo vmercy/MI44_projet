@@ -13,7 +13,7 @@ from flask_wtf import FlaskForm
 import random
 import os
 import string
-from hashlib import sha256
+from hashlib import sha256,pbkdf2_hmac
 
 from wtforms import StringField, PasswordField, SubmitField, BooleanField
 from wtforms.validators import DataRequired, Length, Email, EqualTo
@@ -35,7 +35,7 @@ class LoginForm(FlaskForm):
 LONGUEUR_CODE = 10
 
 LONGUEUR_HASH = 64 #une longueur de 64 caracteres est a prevoir pour une representation hexadecimale des hash
-LONGUEUR_SEL = 100
+LONGUEUR_SEL = 25
 PBKDF2_NB_ITER = 80000 #nombre d'iterations du hashage avec PBKDF2 (selon les recommandations donnees en cours)
 
 def GenererSel(): #retourne un sel de taille fixe compose de caracteres alphanumeriques
@@ -86,9 +86,22 @@ def get_secret_message():
 @app.route("/register",methods=['GET','POST'])
 def register():
     form = RegistrationForm()
-    if form.validate_on_submit():
-        flash("Votre compte de pilote a ete cree avec succes", 'success')
-        return redirect(url_for('/'))
+    if form.is_submitted():
+        if form.validate_on_submit() and form.password.data == form.confirm_password.data:
+            existing_pilots = Pilot.query.all()
+            for pilot in existing_pilots:
+                if form.username.data==pilot.username:
+                    flash("Choisissez un autre identifiant, celui-ci existe déjà.","danger")
+                    return render_template('register.html', form=form)
+            new_sel = GenererSel()
+            new_hash = pbkdf2_hmac('sha256',bytes(form.password.data,'utf-8'),bytes(new_sel,'utf-8'),PBKDF2_NB_ITER)
+            new_pilot = Pilot(username=form.username.data,password_hash=new_hash.hex(),password_salt=new_sel)
+            db.session.add(new_pilot)
+            db.session.commit()
+            flash("Votre compte de pilote a ete cree avec succes. Vous pouvez maintenant vous connecter ou creer un autre compte.", 'success')
+        else:
+            flash("Erreur dans les informations saisies : vous avez mal confirmé votre mot de passe")
+        return redirect(url_for('main'))  
     return render_template('register.html', form=form)
 
 @app.route("/login", methods=['GET', 'POST'])
@@ -97,17 +110,25 @@ def login():
     print("Login form open")
     if form.validate_on_submit():
         print("Soumission formulaire")
-        if form.username.data == 'valentin' and form.password.data == 'mercy':
-            global CURRENT_USER
-            global Authentified
-            Authentified = True
-            CURRENT_USER = "Valentin"
-            print("Authentification ok")
-            flash('Connexion reussie !', 'success')
-            return redirect(url_for('get_secret_message'))
-        else:
-            print("Echec connexion")
-            flash('Echec de la connexion, veuillez verifier votre identifiant et/ou votre mot de passe.', 'danger')
+        pilots = Pilot.query.all()
+        target_pilot = None
+        for pilot in pilots:
+            if pilot.username == form.username.data:
+                target_pilot=pilot
+                break
+        if target_pilot:
+            new_hash = pbkdf2_hmac('sha256',bytes(form.password.data,'utf-8'),bytes(target_pilot.password_salt,'utf-8'),PBKDF2_NB_ITER)
+            print("Pilot match in database")
+            if new_hash.hex() == target_pilot.password_hash:
+                global CURRENT_USER
+                global Authentified
+                Authentified = True
+                CURRENT_USER = target_pilot.username
+                print("Authentification ok")
+                flash('Connexion reussie !', 'success')
+                return redirect(url_for('get_secret_message'))            
+        print("Echec connexion")
+        flash('Echec de la connexion, veuillez verifier votre identifiant et/ou votre mot de passe.', 'danger')
     else:
         print("Pas de soumission du formulaire")
     return render_template('login.html', title='Login', form=form)
@@ -120,5 +141,5 @@ def logout():
 
 
 if __name__=="__main__":
-    app.run(debug=True, host="0.0.0.0",port=8081)
-    #app.run(debug=True, host="0.0.0.0",port=8081,ssl_context=("serveur-cle-publique.pem","serveur-cle-privee.pem"))
+    #app.run(debug=True, host="0.0.0.0",port=8081)
+    app.run(debug=True, host="0.0.0.0",port=8081,ssl_context=("serveur-cle-publique.pem","serveur-cle-privee.pem"))
